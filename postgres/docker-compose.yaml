@@ -1,0 +1,40 @@
+version: "3.8"
+
+# https://github.com/khezen/compose-postgres/blob/master/docker-compose.yml
+services:
+  postgresdb:
+    image: postgres
+    container_name: postgresdb_container
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres:/data/postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      PGDATA: /data/postgres
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@root.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./data/pgadmin:/var/lib/pgadmin
+    networks:
+      - postgres
+    ports:
+      - 8022:80
+    restart: unless-stopped
+
+volumes:
+  data: {}
+
+networks:
+  postgres:
+    driver: bridge
